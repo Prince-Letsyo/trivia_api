@@ -139,14 +139,10 @@ def create_app(test_config=None):
 
     @app.route('/quizzes', methods=['POST'])
     def play_quiz():
-
         try:
-
             body = request.get_json()
-
             if not ('quiz_category' in body and 'previous_questions' in body):
                 abort(422)
-
             category = body.get('quiz_category')
             previous_questions = body.get('previous_questions')
 
@@ -176,6 +172,14 @@ def create_app(test_config=None):
             "message": "resource not found"
         }), 404
 
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "bad request"
+        }), 400
+        
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
@@ -184,12 +188,5 @@ def create_app(test_config=None):
             "message": "unprocessable"
         }), 422
 
-    @app.errorhandler(400)
-    def bad_request(error):
-        return jsonify({
-            "success": False,
-            "error": 400,
-            "message": "bad request"
-        }), 400
 
     return app
